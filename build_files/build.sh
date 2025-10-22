@@ -12,7 +12,7 @@ set -ouex pipefail
 # this installs a package from fedora repos
 dnf5 -y remove plasma-workspace plasma-* kde-*
 
-dnf5 -y install			\
+dnf5 -y --skip-unavailable install			\
 	hyprland			\
 	hyprpaper			\
 	hyprpicker			\
@@ -27,7 +27,6 @@ dnf5 -y install			\
 	hyprland-qtutils   \
 	kitty			\
 	sddm			\
-	vim		\
 	wofi			\
 	brightnessctl  \
 	pacman
