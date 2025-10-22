@@ -27,7 +27,7 @@ dnf5 -y install			\
 	hyprland-qtutils   \
 	kitty			\
 	sddm			\
-	pipewire		\
+	vim		\
 	wofi			\
 	brightnessctl  \
 	pacman
