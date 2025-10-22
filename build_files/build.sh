@@ -10,9 +10,27 @@ set -ouex pipefail
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
 
 # this installs a package from fedora repos
-# dnf5 -y remove plasma-workspace plasma-* kde-*
+dnf5 -y remove plasma-workspace plasma-* kde-*
 
-
+dnf5 -y install			\
+	hyprland			\
+	hyprpaper			\
+	hyprpicker			\
+	hypridle			\
+	hyprlock			\
+	hyprsunset			\
+	hyprpolkitagent		\
+	hyprsysteminfo		\
+	hyprpanel			\
+	qt6ct-kde			\
+	hyprland-qt-support	\
+	hyprland-qtutils   \
+	kitty			\
+	sddm			\
+	pipewire		\
+	wofi			\
+	brightnessctl  \
+	pacman
 
 # Use a COPR Example:
 #
