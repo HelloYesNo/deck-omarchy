@@ -12,7 +12,7 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 
-distrobox-create omarchy --init --image archlinux:latest -y
+distrobox-create omarchy --init --image archlinux:latest --yes
 distrobox-enter omarchy
 
 curl -fsSL https://omarchy.org/install | bash
