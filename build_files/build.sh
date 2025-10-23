@@ -12,24 +12,16 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 
-dnf5 -y install			\
-	hyprland			\
-	hyprpaper			\
-	hyprpicker			\
-	hypridle			\
-	hyprlock			\
-	hyprsunset			\
-	hyprpolkitagent		\
-	hyprsysteminfo		\
-	hyprpanel			\
-	qt6ct-kde			\
-	hyprland-qt-support	\
-	hyprland-qtutils   \
-	kitty			\
-	sddm			\
-	wofi			\
-	brightnessctl  \
-	--skip-unavailable
+distrobox-create omarchy --init --image archlinux:latest
+distrobox-enter omarchy
+
+curl -fsSL https://omarchy.org/install | bash
+
+cp /usr/share/wayland-sessions/hyprland-uwsm.desktop ~/
+
+exit
+
+sudo cp ~/hyprland-uwsm.desktop /usr/share/xsessions/hyprland-uwsm.desktop
 
 # Use a COPR Example:
 #
