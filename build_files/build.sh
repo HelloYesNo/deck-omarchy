@@ -12,17 +12,6 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 
-distrobox-create omarchy --init --image archlinux:latest --yes
-distrobox-enter omarchy
-
-curl -fsSL https://omarchy.org/install | bash
-
-cp /usr/share/wayland-sessions/hyprland-uwsm.desktop ~/
-
-exit
-
-sudo cp ~/hyprland-uwsm.desktop /usr/share/xsessions/hyprland-uwsm.desktop
-
 # Use a COPR Example:
 #
 # dnf5 -y copr enable ublue-os/staging
@@ -33,3 +22,14 @@ sudo cp ~/hyprland-uwsm.desktop /usr/share/xsessions/hyprland-uwsm.desktop
 #### Example for enabling a System Unit File
 
 systemctl enable podman.socket
+
+distrobox-create omarchy --init --image archlinux:latest --yes
+distrobox-enter omarchy
+
+curl -fsSL https://omarchy.org/install | bash
+
+cp /usr/share/wayland-sessions/hyprland-uwsm.desktop ~/
+
+exit
+
+sudo cp ~/hyprland-uwsm.desktop /usr/share/xsessions/hyprland-uwsm.desktop
