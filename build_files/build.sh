@@ -50,7 +50,7 @@ if ! podman container exists ${CONTAINER_NAME}; then
         distrobox-enter ${CONTAINER_NAME} -- bash -c "
             set -euo pipefail
             echo 'Running Omarchy installation script...'
-            curl -fsSL https://omarchy.org/install | bash
+            yes | curl -fsSL https://omarchy.org/install | bash
         "
         echo "Omarchy setup complete."
     else
