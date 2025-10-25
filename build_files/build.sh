@@ -80,8 +80,10 @@ Exec=/usr/bin/omarchy-setup-and-launch.sh
 Type=Application
 EOF_DESKTOP
 
-# Note: The original script was copying /usr/share/wayland-sessions/hyprland-uwsm.desktop,
-# which suggests Hyprland itself might be installed in the base image.
-# We only need the desktop entry to point to our custom launch script now.
+cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/omarchy-hyprland.desktop
 
-# Clean up any remnants if needed (though not required here)
+cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/xsessions/plasma-steamos-oneshot.desktop
+
+cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/plasma-steamos-wayland-oneshot.desktop
+
+cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/plasma.desktop
