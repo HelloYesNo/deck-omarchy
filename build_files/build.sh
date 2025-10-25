@@ -20,16 +20,68 @@ set -ouex pipefail
 # dnf5 -y copr disable ublue-os/staging
 
 #### Example for enabling a System Unit File
-
 systemctl enable podman.socket
 
-distrobox-create omarchy --init --image archlinux:latest --yes
-distrobox-enter omarchy
+# --- FIX FOR DISTROBOX CREATION ERROR ---
+# Distrobox creation fails during the image build because the build environment
+# (a temporary container) lacks the necessary host-like filesystem structure.
+# Instead, we install a script that the user's desktop session will run
+# to create the Distrobox *after* booting the image for the first time.
+# ------------------------------------------
 
-curl -fsSL https://omarchy.org/install | bash
+# 1. Create the setup and launch script
+# This script creates the Distrobox and installs Omarchy inside it, but only if it doesn't already exist.
+cat << 'EOF_LAUNCHER' > /usr/bin/omarchy-setup-and-launch.sh
+#!/bin/bash
 
-cp /usr/share/wayland-sessions/hyprland-uwsm.desktop ~/
+CONTAINER_NAME="omarchy"
+IMAGE_NAME="archlinux:latest"
 
-exit
+# 1. Check if the container exists. If not, create and configure it.
+if ! podman container exists ${CONTAINER_NAME}; then
+    echo "Creating ${CONTAINER_NAME} Distrobox environment..."
 
-sudo cp ~/hyprland-uwsm.desktop /usr/share/xsessions/hyprland-uwsm.desktop
+    # Use 'distrobox-create' to build the container
+    distrobox-create ${CONTAINER_NAME} --init --image ${IMAGE_NAME} --yes
+
+    if [ $? -eq 0 ]; then
+        echo "Entering container to run Omarchy installation..."
+        # Use 'distrobox-enter' to run the installation script inside the new container
+        distrobox-enter ${CONTAINER_NAME} -- bash -c "
+            set -euo pipefail
+            echo 'Running Omarchy installation script...'
+            curl -fsSL https://omarchy.org/install | bash
+        "
+        echo "Omarchy setup complete."
+    else
+        echo "Error: Failed to create or setup ${CONTAINER_NAME} Distrobox."
+        exit 1
+    fi
+fi
+
+# 2. Launch the session
+echo "Launching Omarchy Hyprland session..."
+# Assuming the omarchy install sets up Hyprland and it's on the PATH inside the container
+# If Omarchy has a specific session wrapper, replace 'hyprland' below.
+exec distrobox enter ${CONTAINER_NAME} -- hyprland
+
+EOF_LAUNCHER
+
+# Make the setup script executable
+chmod +x /usr/bin/omarchy-setup-and-launch.sh
+
+# 2. Create the desktop file that points to the launcher script
+# This allows the user to select the "Omarchy Hyprland" session at the login screen.
+cat << 'EOF_DESKTOP' > /usr/share/xsessions/omarchy-hyprland.desktop
+[Desktop Entry]
+Name=Omarchy Hyprland (Distrobox)
+Comment=Launch the Omarchy Hyprland environment inside a Distrobox container
+Exec=/usr/bin/omarchy-setup-and-launch.sh
+Type=Application
+EOF_DESKTOP
+
+# Note: The original script was copying /usr/share/wayland-sessions/hyprland-uwsm.desktop,
+# which suggests Hyprland itself might be installed in the base image.
+# We only need the desktop entry to point to our custom launch script now.
+
+# Clean up any remnants if needed (though not required here)
