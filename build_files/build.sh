@@ -49,8 +49,41 @@ if ! podman container exists ${CONTAINER_NAME}; then
         # Use 'distrobox-enter' to run the installation script inside the new container
         distrobox-enter ${CONTAINER_NAME} -- bash -c "
             set -euo pipefail
+
+            # This is the Omarchy installation script content, run inside the container.
+
+            # Set install mode to online since boot.sh is used for curl installations
+            export OMARCHY_ONLINE_INSTALL=true
+
+            # Omarchy ANSI art is skipped for silent install
+
             echo 'Running Omarchy installation script...'
-            curl -fsSL https://omarchy.org/install | bash
+
+            # The '--noconfirm' flag ensures pacman does not prompt for user input.
+            # We use 'sudo' inside distrobox; the 'distrobox-enter' context typically handles sudo without a password.
+            sudo pacman -Syu --noconfirm --needed git
+
+            # Use custom repo if specified, otherwise default to basecamp/omarchy
+            # OMARCHY_REPO='${OMARCHY_REPO:-HelloYesNo/omarchy}' # Defaulting to the repo from the script
+
+            echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
+            rm -rf ~/.local/share/omarchy/
+            git clone 'https://github.com/HelloYesNo/omarchy.git' ~/.local/share/omarchy >/dev/null
+
+            # Use custom branch if instructed, otherwise default to master
+            OMARCHY_REF='master' # Defaulting to master
+            if [[ \$OMARCHY_REF != 'master' ]]; then
+                echo -e '\e[32mUsing branch: \$OMARCHY_REF\e[0m'
+                cd ~/.local/share/omarchy
+                git fetch origin '\${OMARCHY_REF}' && git checkout '\${OMARCHY_REF}'
+                cd -
+            fi
+
+            echo -e '\nInstallation starting...'
+
+            # The core install script. Since we already used --noconfirm on pacman,
+            # and the rest of the script is git/echo/source, it should run non-interactively.
+            source ~/.local/share/omarchy/install.sh
         "
         echo "Omarchy setup complete."
     else
@@ -59,7 +92,9 @@ if ! podman container exists ${CONTAINER_NAME}; then
     fi
 fi
 
-# 2. Ensure the container is running (started)
+
+## 2. Ensure the container is running (started)
+
 # Use podman inspect to check the container's running status.
 # If it's not running, start it.
 if [[ $(podman inspect -f '{{.State.Running}}' ${CONTAINER_NAME} 2>/dev/null) != "true" ]]; then
@@ -73,11 +108,14 @@ if [[ $(podman inspect -f '{{.State.Running}}' ${CONTAINER_NAME} 2>/dev/null) !=
     fi
 fi
 
-# 3. Launch the session
+
+## 3. Launch the session
+
 echo "Launching Omarchy Hyprland session..."
 # 'distrobox enter' will now execute the command in the verified running container.
 # Assuming the omarchy install sets up Hyprland and it's on the PATH inside the container
 exec distrobox enter ${CONTAINER_NAME} -- hyprland
+
 
 EOF_LAUNCHER
 
