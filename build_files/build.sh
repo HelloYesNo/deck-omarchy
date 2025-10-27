@@ -10,7 +10,7 @@ set -ouex pipefail
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/39/x86_64/repoview/index.html&protocol=https&redirect=1
 
 # this installs a package from fedora repos
-# dnf5 -y remove plasma-workspace plasma-* kde-*
+dnf5 -y remove plasma-workspace plasma-* kde-*
 
 # Use a COPR Example:
 #
@@ -50,7 +50,7 @@ if ! podman container exists ${CONTAINER_NAME}; then
         distrobox-enter ${CONTAINER_NAME} -- bash -c "
             set -euo pipefail
             echo 'Running Omarchy installation script...'
-            yes | curl -fsSL https://omarchy.org/install | bash
+            curl -fsSL https://omarchy.org/install | bash
         "
         echo "Omarchy setup complete."
     else
@@ -59,10 +59,24 @@ if ! podman container exists ${CONTAINER_NAME}; then
     fi
 fi
 
-# 2. Launch the session
+# 2. Ensure the container is running (started)
+# Use podman inspect to check the container's running status.
+# If it's not running, start it.
+if [[ $(podman inspect -f '{{.State.Running}}' ${CONTAINER_NAME} 2>/dev/null) != "true" ]]; then
+    echo "Starting ${CONTAINER_NAME} Distrobox..."
+    # 'distrobox start' is the correct command to start a Distrobox container
+    distrobox start ${CONTAINER_NAME}
+
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to start ${CONTAINER_NAME} Distrobox."
+        exit 1
+    fi
+fi
+
+# 3. Launch the session
 echo "Launching Omarchy Hyprland session..."
+# 'distrobox enter' will now execute the command in the verified running container.
 # Assuming the omarchy install sets up Hyprland and it's on the PATH inside the container
-# If Omarchy has a specific session wrapper, replace 'hyprland' below.
 exec distrobox enter ${CONTAINER_NAME} -- hyprland
 
 EOF_LAUNCHER
@@ -84,6 +98,6 @@ cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/om
 
 # cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/xsessions/plasma-steamos-oneshot.desktop
 #
-# cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/plasma-steamos-wayland-oneshot.desktop
+cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/plasma-steamos-wayland-oneshot.desktop
 #
-# cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/plasma.desktop
+cp /usr/share/xsessions/omarchy-hyprland.desktop  /usr/share/wayland-sessions/plasma.desktop
