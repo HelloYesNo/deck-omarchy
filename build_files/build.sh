@@ -12,7 +12,7 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-dnf5 install -y git
+dnf5 install -y git mise
 
 
 # This is the Omarchy installation script content, run inside the container.
@@ -34,7 +34,7 @@ git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/d
 # Use custom branch if instructed, otherwise default to master
 OMARCHY_REF='master' # Defaulting to master
 if [[ \$OMARCHY_REF != 'master' ]]; then
-    echo -e '\e[32mUsing branch: \$OMARCHY_REF\e[0m'
+    echo -e '\e[32mUsing branch: master\e[0m'
     cd /.local/share/omarchy/
     git fetch origin 'master' && git checkout 'master'
     cd -
