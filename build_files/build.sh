@@ -11,11 +11,9 @@ set -ouex pipefail
 
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
-# 1. Create the setup and launch script
-# This script creates the Distrobox and installs Omarchy inside it, but only if it doesn't already exist.
+dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
+dnf5 install -y git
 
-#!/bin/bash
-set -euo pipefail
 
 # This is the Omarchy installation script content, run inside the container.
 
@@ -25,18 +23,12 @@ export OMARCHY_ONLINE_INSTALL=true
 # Omarchy ANSI art is skipped for silent install
 
 echo 'Running Omarchy installation script...'
-
-# The '--noconfirm' flag ensures pacman does not prompt for user input.
-# We use 'sudo' inside distrobox; the 'distrobox-enter' context typically handles sudo without a password.
-dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-dnf5 install -y git
-
 # Use custom repo if specified, otherwise default to basecamp/omarchy
 # OMARCHY_REPO='${OMARCHY_REPO:-HelloYesNo/omarchy}' # Defaulting to the repo from the script
 
 echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
 rm -rf ~/.local/share/omarchy/
-mkdir ~/.local/share/omarchy/
+mkdir -p ~/.local/share/omarchy/
 git clone 'https://github.com/HelloYesNo/omarchy.git' ~/.local/share/omarchy >/dev/null
 
 # Use custom branch if instructed, otherwise default to master
