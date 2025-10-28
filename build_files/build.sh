@@ -28,7 +28,7 @@ echo 'Running Omarchy installation script...'
 
 # The '--noconfirm' flag ensures pacman does not prompt for user input.
 # We use 'sudo' inside distrobox; the 'distrobox-enter' context typically handles sudo without a password.
-sudo dnf5 install -y git
+dnf5 install -y git
 
 # Use custom repo if specified, otherwise default to basecamp/omarchy
 # OMARCHY_REPO='${OMARCHY_REPO:-HelloYesNo/omarchy}' # Defaulting to the repo from the script
