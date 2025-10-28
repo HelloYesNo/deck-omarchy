@@ -20,8 +20,8 @@ git clone https://github.com/Vladimir-csp/uwsm.git /uwsm
 cd uwsm
 git checkout $(git describe --tags --abbrev=0)
 meson setup --prefix=/usr/local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build
-chown -R 0:0 /usr/local
-mkdir -p /usr/local/share /usr/local/bin /usr/local/lib
+# chown -R 0:0 /usr/local
+# mkdir -p /usr/local/share /usr/local/bin /usr/local/lib
 ninja -C build
 ninja -C build install
 uwsm --version
