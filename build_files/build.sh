@@ -28,7 +28,7 @@ echo 'Running Omarchy installation script...'
 
 echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
 rm -rf ~/.local/share/omarchy/
-mkdir -p "$HOME/.local/share/omarchy/"
+mkdir -p "$HOME/.local/share/omarchy/" 2>/dev/null
 git clone 'https://github.com/HelloYesNo/omarchy.git' "$HOME/.local/share/omarchy/" >/dev/null
 
 # Use custom branch if instructed, otherwise default to master
