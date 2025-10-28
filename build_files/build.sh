@@ -36,7 +36,7 @@ OMARCHY_REF='master' # Defaulting to master
 if [[ \$OMARCHY_REF != 'master' ]]; then
     echo -e '\e[32mUsing branch: \$OMARCHY_REF\e[0m'
     cd '$HOME/.local/share/omarchy/'
-    git fetch origin '\${OMARCHY_REF}' && git checkout '\${OMARCHY_REF}'
+    git fetch origin '\master' && git checkout '\master'
     cd -
 fi
 
