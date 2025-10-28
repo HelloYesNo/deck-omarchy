@@ -35,7 +35,7 @@ git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/d
 OMARCHY_REF='master' # Defaulting to master
 if [[ \$OMARCHY_REF != 'master' ]]; then
     echo -e '\e[32mUsing branch: \$OMARCHY_REF\e[0m'
-    cd "$HOME/.local/share/omarchy/"
+    cd /.local/share/omarchy/
     git fetch origin 'master' && git checkout 'master'
     cd -
 fi
@@ -44,7 +44,7 @@ echo -e '\nInstallation starting...'
 
 # The core install script. Since we already used --noconfirm on pacman,
 # and the rest of the script is git/echo/source, it should run non-interactively.
-source "$HOME/.local/share/omarchy/install.sh"
+source /.local/share/omarchy/install.sh
 echo "Omarchy setup complete."
 
 
