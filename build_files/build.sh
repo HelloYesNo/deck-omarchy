@@ -28,7 +28,7 @@ echo 'Running Omarchy installation script...'
 
 # The '--noconfirm' flag ensures pacman does not prompt for user input.
 # We use 'sudo' inside distrobox; the 'distrobox-enter' context typically handles sudo without a password.
-dnf5 config-manager addrepo --from-repofile=https://terra.fyralabs.com/terra.repo
+dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
 dnf5 install -y git
 
 # Use custom repo if specified, otherwise default to basecamp/omarchy
