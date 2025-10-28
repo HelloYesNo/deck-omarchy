@@ -12,8 +12,17 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-dnf5 install -y git mise
+dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise meson ninja-build python3 python3-pip util-linux whiptail fuzzel libnotify
+pip install pyxdg dbus-python
 
+mkdir -p /uwsm
+git clone https://github.com/Vladimir-csp/uwsm.git /uwsm
+cd uwsm
+git checkout $(git describe --tags --abbrev=0)
+meson setup --prefix=/usr/local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build
+ninja -C build
+ninja -C build install
+uwsm --version
 
 # This is the Omarchy installation script content, run inside the container.
 
