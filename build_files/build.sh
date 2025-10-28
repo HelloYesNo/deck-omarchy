@@ -27,9 +27,9 @@ echo 'Running Omarchy installation script...'
 # OMARCHY_REPO='${OMARCHY_REPO:-HelloYesNo/omarchy}' # Defaulting to the repo from the script
 
 echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
-rm -rf /root/.local/share/omarchy/
-mkdir -p /root/.local/share/omarchy/
-git clone "https://github.com/HelloYesNo/omarchy.git" "$HOME/.local/share/omarchy/" >/dev/null
+# rm -rf /root/.local/share/omarchy/
+mkdir -p /.local/share/omarchy/
+git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null
 
 # Use custom branch if instructed, otherwise default to master
 OMARCHY_REF='master' # Defaulting to master
