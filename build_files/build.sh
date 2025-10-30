@@ -4,44 +4,6 @@ set -ouex pipefail
 
 ### Install packages
 
-pacman -Sy
-pacman -Syyuu --noconfirm \
-      base \
-      dracut \
-      linux \
-      linux-firmware \
-      ostree \
-      systemd \
-      btrfs-progs \
-      e2fsprogs \
-      xfsprogs \
-      dosfstools \
-      skopeo \
-      dbus \
-      dbus-glib \
-      glib2 \
-      ostree \
-      shadow \
-      base-devel \
-      git \
-      rust \
-      whois \
-      podman \
-      && \
-  pacman -S --clean && \
-  rm -rf /var/cache/pacman/pkg/*
-
-  --mount=type=tmpfs,dst=/tmp --mount=type=tmpfs,dst=/root \
-    git clone https://github.com/bootc-dev/bootc.git /tmp/bootc && \
-    cd /tmp/bootc && \
-    CARGO_FEATURES="composefs-backend" make bin && \
-    make install-all && \
-    make install-initramfs-dracut && \
-    git clone https://github.com/p5/coreos-bootupd.git -b sdboot-support /tmp/bootupd && \
-    cd /tmp/bootupd && \
-    cargo build --release --bins --features systemd-boot && \
-    make install
-
 # Packages can be installed from any enabled yum repo on the image.
 # RPMfusion repos are available by default in ublue main images
 # List of rpmfusion packages can be found here:
