@@ -2,7 +2,7 @@
 FROM scratch AS ctx
 COPY build_files /
 
-FROM docker.io/archlinux/archlinux:latest AS builder
+FROM ghcr.io/ublue-os/arch-toolbox:latest AS builder
 
 ENV DEV_DEPS="base-devel git rust whois"
 
