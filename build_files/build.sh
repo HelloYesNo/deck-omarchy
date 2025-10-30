@@ -4,6 +4,9 @@ set -ouex pipefail
 
 ### Install packages
 
+pacman -Sy
+pacman -S bootconfig podman
+
 # Packages can be installed from any enabled yum repo on the image.
 # RPMfusion repos are available by default in ublue main images
 # List of rpmfusion packages can be found here:
@@ -88,4 +91,4 @@ set -ouex pipefail
 # dnf5 -y copr disable ublue-os/staging
 
 #### Example for enabling a System Unit File
-# systemctl enable podman.socket
+systemctl enable podman.socket
