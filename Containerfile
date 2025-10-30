@@ -6,7 +6,7 @@ COPY build_files /
 # FROM ghcr.io/ublue-os/bazzite-deck:stable
 
 ## Other possible base images include:
-FROM ghcr.io/ublue-os/bazzite-arch:latest
+FROM docker.io/archlinux/archlinux:latest
 # FROM ghcr.io/ublue-os/bluefin-nvidia:stable
 # 
 # ... and so on, here are more base images
@@ -23,7 +23,46 @@ FROM ghcr.io/ublue-os/bazzite-arch:latest
 ## Uncomment the following line if one desires to make /opt immutable and be able to be used
 ## by the package manager.
 
-# RUN rm /opt && mkdir /opt
+ENV DEV_DEPS="base-devel git rust whois"
+
+ENV DRACUT_NO_XATTR=1
+RUN pacman -Syyuu --noconfirm \
+      base \
+      dracut \
+      linux \
+      linux-firmware \
+      ostree \
+      systemd \
+      btrfs-progs \
+      e2fsprogs \
+      xfsprogs \
+      dosfstools \
+      skopeo \
+      dbus \
+      dbus-glib \
+      glib2 \
+      ostree \
+      shadow \
+      ${DEV_DEPS} && \
+  pacman -S --clean && \
+  rm -rf /var/cache/pacman/pkg/*
+
+RUN --mount=type=tmpfs,dst=/tmp --mount=type=tmpfs,dst=/root \
+    git clone https://github.com/bootc-dev/bootc.git /tmp/bootc && \
+    cd /tmp/bootc && \
+    CARGO_FEATURES="composefs-backend" make bin && \
+    make install-all && \
+    make install-initramfs-dracut && \
+    git clone https://github.com/p5/coreos-bootupd.git -b sdboot-support /tmp/bootupd && \
+    cd /tmp/bootupd && \
+    cargo build --release --bins --features systemd-boot && \
+    make install
+
+RUN mkdir -p /usr/lib/ostree && \
+    printf  "[composefs]\nenabled = yes\n[sysroot]\nreadonly = true\n" | \
+    tee "/usr/lib/ostree/prepare-root.conf"
+
+RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
 ## make modifications desired in your image and install packages by modifying the build.sh script
