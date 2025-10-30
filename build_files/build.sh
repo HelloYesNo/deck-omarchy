@@ -88,4 +88,4 @@ set -ouex pipefail
 # dnf5 -y copr disable ublue-os/staging
 
 #### Example for enabling a System Unit File
-systemctl enable podman.socket
+# systemctl enable podman.socket
