@@ -2,26 +2,7 @@
 FROM scratch AS ctx
 COPY build_files /
 
-# Base Image
-# FROM ghcr.io/ublue-os/bazzite-deck:stable
-
-## Other possible base images include:
-FROM docker.io/archlinux/archlinux:latest
-# FROM ghcr.io/ublue-os/bluefin-nvidia:stable
-# 
-# ... and so on, here are more base images
-# Universal Blue Images: https://github.com/orgs/ublue-os/packages
-# Fedora base image: quay.io/fedora/fedora-bootc:41
-# CentOS base images: quay.io/centos-bootc/centos-bootc:stream10
-
-### [IM]MUTABLE /opt
-## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
-## make it mutable/writable for users. However, some packages write files to this directory,
-## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
-## some packages. Eg, google-chrome, docker-desktop.
-##
-## Uncomment the following line if one desires to make /opt immutable and be able to be used
-## by the package manager.
+FROM docker.io/archlinux/archlinux:latest AS builder
 
 ENV DEV_DEPS="base-devel git rust whois"
 
@@ -58,22 +39,29 @@ RUN --mount=type=tmpfs,dst=/tmp --mount=type=tmpfs,dst=/root \
     cargo build --release --bins --features systemd-boot && \
     make install
 
+# Setup a temporary root passwd (changeme) for dev purposes
+# TODO: Replace this for a more robust option when in prod
+RUN usermod -p "$(echo "changeme" | mkpasswd -s)" root
+
+RUN pacman -Rns --noconfirm ${DEV_DEPS}
+
+RUN sh -c 'export KERNEL_VERSION="$(basename "$(find /usr/lib/modules -maxdepth 1 -type d | grep -v -E "*.img" | tail -n 1)")" && \
+    dracut --force --no-hostonly --reproducible --zstd --verbose --kver "$KERNEL_VERSION"  "/usr/lib/modules/$KERNEL_VERSION/initramfs.img"'
+
+RUN rm -rf /var /boot /home /root /usr/local /srv && \
+    mkdir -p /var /boot /sysroot && \
+    ln -s /var/home /home && \
+    ln -s /var/roothome /root && \
+    ln -s /var/srv /srv && \
+    ln -s sysroot/ostree ostree && \
+    ln -s /var/usrlocal /usr/local
+
+# Update useradd default to /var/home instead of /home for User Creation
+RUN sed -i 's|^HOME=.*|HOME=/var/home|' "/etc/default/useradd"
+
+# Necessary for `bootc install`
 RUN mkdir -p /usr/lib/ostree && \
     printf  "[composefs]\nenabled = yes\n[sysroot]\nreadonly = true\n" | \
     tee "/usr/lib/ostree/prepare-root.conf"
 
-RUN rm /opt && mkdir /opt
-
-### MODIFICATIONS
-## make modifications desired in your image and install packages by modifying the build.sh script
-## the following RUN directive does all the things required to run "build.sh" as recommended.
-
-RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    --mount=type=tmpfs,dst=/tmp \
-    /ctx/build.sh
-    
-### LINTING
-## Verify final image and contents are correct.
 RUN bootc container lint
