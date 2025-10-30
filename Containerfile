@@ -31,7 +31,7 @@ RUN pacman -Syyuu --noconfirm \
 RUN --mount=type=tmpfs,dst=/tmp --mount=type=tmpfs,dst=/root \
     git clone https://github.com/bootc-dev/bootc.git /tmp/bootc && \
     cd /tmp/bootc && \
-    CARGO_FEATURES="composefs-backend" make bin && \
+    make bin && \
     make install-all && \
     make install-initramfs-dracut && \
     git clone https://github.com/p5/coreos-bootupd.git -b sdboot-support /tmp/bootupd && \
