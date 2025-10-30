@@ -122,7 +122,13 @@ RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/m
     rm -rf \
         /tmp/*
 
-
+RUN rm -rf /var /boot /home /root /usr/local /srv && \
+    mkdir -p /var /boot /sysroot && \
+    ln -s /var/home /home && \
+    ln -s /var/roothome /root && \
+    ln -s /var/srv /srv && \
+    ln -s sysroot/ostree ostree && \
+    ln -s /var/usrlocal /usr/local
 
 # Necessary for `bootc install`
 RUN mkdir -p /usr/lib/ostree && \
