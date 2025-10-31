@@ -37,6 +37,12 @@ RUN --mount=type=cache,dst=/var/cache \
         libgcc \
         dbus-devel \
         glib2-devel \
+        python3-devel \
+        util-linux \
+        whiptail \
+        fuzzel \
+        libnotify \
+        scdoc \
     && pip install pyxdg dbus-python
 
 # Step 2: Build and install uwsm
