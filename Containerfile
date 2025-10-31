@@ -71,6 +71,7 @@ USER root
 WORKDIR /
 
 RUN export OMARCHY_ONLINE_INSTALL=true \
+    && mkdir -p /var/log \
     && mkdir -p /.local/share/omarchy/ \
     && git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null \
     && source /.local/share/omarchy/install.sh 
