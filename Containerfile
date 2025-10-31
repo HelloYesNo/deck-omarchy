@@ -2,137 +2,50 @@
 FROM scratch AS ctx
 COPY build_files /
 
-FROM ghcr.io/ublue-os/arch-toolbox:latest AS builder
+# Base Image
+#FROM ghcr.io/ublue-os/bazzite:stable
 
-ENV DEV_DEPS="base-devel git rust whois"
+## Other possible base images include:
+# FROM ghcr.io/ublue-os/bazzite:latest
+# FROM ghcr.io/ublue-os/bluefin-nvidia:stable
+# 
+# ... and so on, here are more base images
+# Universal Blue Images: https://github.com/orgs/ublue-os/packages
+Fedora base image: quay.io/fedora/fedora-bootc:41
+# CentOS base images: quay.io/centos-bootc/centos-bootc:stream10
 
-ENV DRACUT_NO_XATTR=1
-RUN pacman -Syyuu --noconfirm \
-      base \
-      dracut \
-      linux \
-      linux-firmware \
-      ostree \
-      systemd \
-      btrfs-progs \
-      e2fsprogs \
-      xfsprogs \
-      dosfstools \
-      skopeo \
-      dbus \
-      dbus-glib \
-      glib2 \
-      ostree \
-      shadow \
-      ${DEV_DEPS} && \
-  pacman -S --clean && \
-  rm -rf /var/cache/pacman/pkg/*
+### [IM]MUTABLE /opt
+## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
+## make it mutable/writable for users. However, some packages write files to this directory,
+## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
+## some packages. Eg, google-chrome, docker-desktop.
+##
+## Uncomment the following line if one desires to make /opt immutable and be able to be used
+## by the package manager.
 
-RUN --mount=type=tmpfs,dst=/tmp --mount=type=tmpfs,dst=/root \
-    git clone https://github.com/bootc-dev/bootc.git /tmp/bootc && \
-    cd /tmp/bootc && \
-    make bin && \
-    make install-all && \
-    make install-initramfs-dracut && \
-    git clone https://github.com/p5/coreos-bootupd.git -b sdboot-support /tmp/bootupd && \
-    cd /tmp/bootupd && \
-    cargo build --release --bins --features systemd-boot && \
-    make install
-RUN pacman -Syu \
-        lib32-vulkan-radeon \
-        libva-mesa-driver \
-        intel-media-driver \
-        vulkan-mesa-layers \
-        lib32-vulkan-mesa-layers \
-        lib32-libnm \
-        openal \
-        pipewire \
-        pipewire-pulse \
-        pipewire-alsa \
-        pipewire-jack \
-        wireplumber \
-        lib32-pipewire \
-        lib32-pipewire-jack \
-        lib32-libpulse \
-        lib32-openal \
-        xdg-desktop-portal-kde \
-        vim \
-        nano \
-        hyfetch \
-        fish \
-        yad \
-        xdg-user-dirs \
-        xdotool \
-        xorg-xwininfo \
-        wmctrl \
-        wxwidgets-gtk3 \
-        rocm-opencl-runtime \
-        rocm-hip-runtime \
-        libbsd \
-        noto-fonts-cjk \
-        glibc-locales \
-        --noconfirm && \
-    pacman -S \
-        steam \
-        lutris \
-        mangohud \
-        lib32-mangohud \
-        --noconfirm && \
-        wget https://raw.githubusercontent.com/Shringe/LatencyFleX-Installer/main/install.sh -O /usr/bin/latencyflex && \
-        sed -i 's@"dxvk.conf"@"/usr/share/latencyflex/dxvk.conf"@g' /usr/bin/latencyflex && \
-        chmod +x /usr/bin/latencyflex && \
-    pacman -S --clean --clean && \
-    rm -rf /var/cache/pacman/pkg/*
-# Create build user
-RUN useradd -m --shell=/bin/bash build && usermod -L build && \
-    echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    echo "root ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN mkdir -p /uwsm \
+      git clone https://github.com/Vladimir-csp/uwsm.git /uwsm \
+      cd uwsm \
+      git checkout $(git describe --tags --abbrev=0) \
+      meson setup --prefix=/usr/local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
+      chown -R 0:0 /usr/local \
+      mkdir -p /usr/local/share /usr/local/bin /usr/local/lib \
+      ninja -C build \
+      ninja -C build install \
+      uwsm --version
 
-# Install AUR packages
-USER build
-WORKDIR /home/build
-RUN paru -S \
-        aur/protontricks \
-        aur/vkbasalt \
-        aur/lib32-vkbasalt \
-        aur/obs-vkcapture-git \
-        aur/lib32-obs-vkcapture-git \
-        aur/lib32-gperftools \
-        aur/steamcmd \
-        --noconfirm
-USER root
-WORKDIR /
+RUN rm /opt && mkdir /opt
 
-# Cleanup
-# Native march & tune. This is a gaming image and not something a user is going to compile things in with the intent to share.
-# We do this last because it'll only apply to updates the user makes going forward. We don't want to optimize for the build host's environment.
-RUN sed -i 's@ (Runtime)@@g' /usr/share/applications/steam.desktop && \
-    sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
-    userdel -r build && \
-    rm -drf /home/build && \
-    sed -i '/build ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
-    sed -i '/root ALL=(ALL) NOPASSWD: ALL/d' /etc/sudoers && \
-    rm -rf /home/build/.cache/* && \
-    rm -rf \
-        /tmp/* \
-        /var/cache/pacman/pkg/*
+### MODIFICATIONS
+## make modifications desired in your image and install packages by modifying the build.sh script
+## the following RUN directive does all the things required to run "build.sh" as recommended.
 
-# Cleanup
-RUN sed -i 's/-march=x86-64 -mtune=generic/-march=native -mtune=native/g' /etc/makepkg.conf && \
-    rm -rf \
-        /tmp/*
-
-RUN rm -rf /var /boot /home /root /usr/local /srv && \
-    mkdir -p /var /boot /sysroot && \
-    ln -s /var/home /home && \
-    ln -s /var/roothome /root && \
-    ln -s /var/srv /srv && \
-    ln -s sysroot/ostree ostree && \
-    ln -s /var/usrlocal /usr/local
-
-# Necessary for `bootc install`
-RUN mkdir -p /usr/lib/ostree && \
-    printf  "[composefs]\nenabled = yes\n[sysroot]\nreadonly = true\n" | \
-    tee "/usr/lib/ostree/prepare-root.conf"
-
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/build.sh
+    
+### LINTING
+## Verify final image and contents are correct.
 RUN bootc container lint
