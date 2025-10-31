@@ -53,8 +53,8 @@ fi
 
 echo -e '\nInstallation starting...'
 
-The core install script. Since we already used --noconfirm on pacman,
-and the rest of the script is git/echo/source, it should run non-interactively.
+# The core install script. Since we already used --noconfirm on pacman,
+# and the rest of the script is git/echo/source, it should run non-interactively.
 source /.local/share/omarchy/install.sh
 echo "Omarchy setup complete."
 
