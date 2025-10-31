@@ -47,6 +47,7 @@ RUN --mount=type=cache,dst=/var/cache \
         mise \
         pacman \
         power-profiles-daemon \
+        mlocate \
     && pip install pyxdg dbus-python
 
 # Step 2: Build and install uwsm
@@ -73,6 +74,7 @@ WORKDIR /
 RUN export OMARCHY_ONLINE_INSTALL=true \
     && mkdir -p /var/log \
     && mkdir -p /root/.config \
+    && touch /etc/vconsole.conf \
     && mkdir -p /.local/share/omarchy/ \
     && git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null \
     && source /.local/share/omarchy/install.sh 
