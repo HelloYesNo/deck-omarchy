@@ -12,7 +12,7 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise meson ninja-build python3 python3-pip util-linux whiptail fuzzel libnotify scdoc pacmanc
+dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise pacman
 # pip install pyxdg dbus-python
 
 # mkdir -p /uwsm
@@ -42,7 +42,7 @@ echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
 mkdir -p /.local/share/omarchy/
 git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null
 
-Use custom branch if instructed, otherwise default to master
+# Use custom branch if instructed, otherwise default to master
 OMARCHY_REF='master' # Defaulting to master
 if [[ \$OMARCHY_REF != 'master' ]]; then
     echo -e '\e[32mUsing branch: master\e[0m'
