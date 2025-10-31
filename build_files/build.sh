@@ -12,7 +12,7 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise pacman
+dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise pacman power-profiles-daemon
 # pip install pyxdg dbus-python
 
 # mkdir -p /uwsm
