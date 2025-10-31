@@ -63,6 +63,9 @@ RUN mkdir -p /home/builder/uwsm \
     && ninja -C build install \
     && /home/builder/.local/bin/uwsm --version
 
+USER root
+WORKDIR /
+
 RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
