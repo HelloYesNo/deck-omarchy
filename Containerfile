@@ -51,6 +51,7 @@ RUN mkdir -p /uwsm \
     && git clone https://github.com/Vladimir-csp/uwsm.git /uwsm \
     && cd /uwsm \
     && git checkout $(git describe --tags --abbrev=0) \
+    && mkdir -p /usr/local/share /usr/local/bin /usr/local/lib \
     && meson setup --prefix=/usr/local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
     && ninja -C build \
     && ninja -C build install \
