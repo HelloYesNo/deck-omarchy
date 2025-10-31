@@ -12,7 +12,7 @@ set -ouex pipefail
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
 dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-# dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise meson ninja-build python3 python3-pip util-linux whiptail fuzzel libnotify scdoc
+dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise meson ninja-build python3 python3-pip util-linux whiptail fuzzel libnotify scdo pacmanc
 # pip install pyxdg dbus-python
 
 # mkdir -p /uwsm
