@@ -47,15 +47,22 @@ RUN --mount=type=cache,dst=/var/cache \
 
 # Step 2: Build and install uwsm
 # Now that 'git' and other tools are installed, this step should work
+RUN groupadd -r builder && useradd -r -g builder -m builder
+# Switch all subsequent commands in this layer to the 'builder' user
+USER builder 
+
+# STEP 4/7: Build and install uwsm (as builder)
+# Note: Since the user 'builder' won't have permission to write to /usr/local,
+# we need to change the installation prefix to /home/builder/.local/
 RUN mkdir -p /uwsm \
     && git clone https://github.com/Vladimir-csp/uwsm.git /uwsm \
     && cd /uwsm \
     && git checkout $(git describe --tags --abbrev=0) \
-    && mkdir -p /usr/local/share /usr/local/bin /usr/local/lib \
-    && meson setup --prefix=/usr/local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
+    # 👇 Use the user's local directory for the prefix
+    && meson setup --prefix=/home/builder/.local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
     && ninja -C build \
     && ninja -C build install \
-    && uwsm --version
+    && /home/builder/.local/bin/uwsm --version
 
 RUN rm /opt && mkdir /opt
 
