@@ -27,7 +27,8 @@ FROM ghcr.io/ublue-os/bazzite:latest
 # Using '\' for clean multi-line readability within one RUN instruction
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
-    dnf5 -y install \
+    dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo \
+    && dnf5 -y install \
         git \
         meson \
         ninja-build \
@@ -43,6 +44,9 @@ RUN --mount=type=cache,dst=/var/cache \
         fuzzel \
         libnotify \
         scdoc \
+        mise \
+        pacman \
+        power-profiles-daemon \
     && pip install pyxdg dbus-python
 
 # Step 2: Build and install uwsm
@@ -65,6 +69,12 @@ RUN mkdir -p /home/builder/uwsm \
 
 USER root
 WORKDIR /
+
+RUN export OMARCHY_ONLINE_INSTALL=true \
+    && mkdir -p /.local/share/omarchy/ \
+    && git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null \
+    && source /.local/share/omarchy/install.sh 
+
 
 RUN rm /opt && mkdir /opt
 
