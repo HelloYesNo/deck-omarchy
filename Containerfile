@@ -33,6 +33,9 @@ RUN --mount=type=cache,dst=/var/cache \
         ninja-build \
         python3 \
         python3-pip \
+        gcc \
+        libgcc \
+        dbus-devel \
     && pip install pyxdg dbus-python
 
 # Step 2: Build and install uwsm
