@@ -23,7 +23,16 @@ FROM quay.io/fedora/fedora-bootc:42
 ## Uncomment the following line if one desires to make /opt immutable and be able to be used
 ## by the package manager.
 
-RUN mkdir -p /uwsm \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+      dnf5 -y install \
+            git \
+            meson  \
+            ninja-build \
+            python3 \
+            python3-pip \
+      pip install pyxdg dbus-python \
+      mkdir -p /uwsm \
       git clone https://github.com/Vladimir-csp/uwsm.git /uwsm \
       cd uwsm \
       git checkout $(git describe --tags --abbrev=0) \
