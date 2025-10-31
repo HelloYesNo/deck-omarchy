@@ -47,7 +47,7 @@ RUN --mount=type=cache,dst=/var/cache \
         mise \
         pacman \
         power-profiles-daemon \
-        mlocate \
+        plocate \
     && pip install pyxdg dbus-python
 
 # Step 2: Build and install uwsm
