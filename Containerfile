@@ -28,7 +28,7 @@ FROM ghcr.io/ublue-os/bazzite:latest
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo \
-    && dnf5 -y install \
+    && dnf5 -y install --allowerasing \
         git \
         meson \
         ninja-build \
