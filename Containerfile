@@ -54,11 +54,10 @@ USER builder
 # STEP 4/7: Build and install uwsm (as builder)
 # Note: Since the user 'builder' won't have permission to write to /usr/local,
 # we need to change the installation prefix to /home/builder/.local/
-RUN mkdir -p /uwsm \
-    && git clone https://github.com/Vladimir-csp/uwsm.git /uwsm \
-    && cd /uwsm \
+RUN mkdir -p /home/builder/uwsm \
+    && git clone https://github.com/Vladimir-csp/uwsm.git /tmp/uwsm \
+    && cd /tmp/uwsm \
     && git checkout $(git describe --tags --abbrev=0) \
-    # 👇 Use the user's local directory for the prefix
     && meson setup --prefix=/home/builder/.local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
     && ninja -C build \
     && ninja -C build install \
