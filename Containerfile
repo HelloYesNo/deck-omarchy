@@ -79,8 +79,8 @@ RUN export OMARCHY_ONLINE_INSTALL=true \
     && git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null \
     && source /.local/share/omarchy/install.sh 
 
-RUN rm -f /var/log/*.log /var/log/*/*.log
-RUN rm /opt && mkdir /opt
+# RUN rm -f /var/log/*.log /var/log/*/*.log
+# RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
 ## make modifications desired in your image and install packages by modifying the build.sh script
