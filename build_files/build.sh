@@ -11,6 +11,14 @@ set -ouex pipefail
 
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
+
+git clone --depth=1 https://github.com/JaKooLit/Fedora-Hyprland.git ~/Fedora-Hyprland
+cd ~/Fedora-Hyprland
+chmod +x install.sh
+./install.sh
+
+
+
 # dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
 # dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise pacman power-profiles-daemon
 # pip install pyxdg dbus-python
