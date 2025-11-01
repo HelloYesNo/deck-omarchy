@@ -3,7 +3,7 @@ FROM scratch AS ctx
 COPY build_files /
 
 # Base Image
-FROM ghcr.io/ublue-os/bazzite:latest
+FROM ghcr.io/ublue-os/bazzite-deck:latest
 
 ## Other possible base images include:
 # FROM ghcr.io/ublue-os/bazzite:latest
@@ -23,63 +23,6 @@ FROM ghcr.io/ublue-os/bazzite:latest
 ## Uncomment the following line if one desires to make /opt immutable and be able to be used
 ## by the package manager.
 
-# Step 1: Install packages
-# Using '\' for clean multi-line readability within one RUN instruction
-RUN --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo \
-    && dnf5 -y install --allowerasing \
-        git \
-        meson \
-        ninja-build \
-        python3 \
-        python3-pip \
-        gcc \
-        libgcc \
-        dbus-devel \
-        glib2-devel \
-        python3-devel \
-        util-linux \
-        whiptail \
-        fuzzel \
-        libnotify \
-        scdoc \
-        mise \
-        pacman \
-        power-profiles-daemon \
-        plocate \
-    && pip install pyxdg dbus-python
-
-# Step 2: Build and install uwsm
-# Now that 'git' and other tools are installed, this step should work
-RUN groupadd -r builder && useradd -r -g builder -m builder
-# Switch all subsequent commands in this layer to the 'builder' user
-USER builder 
-
-# STEP 4/7: Build and install uwsm (as builder)
-# Note: Since the user 'builder' won't have permission to write to /usr/local,
-# we need to change the installation prefix to /home/builder/.local/
-RUN mkdir -p /home/builder/uwsm \
-    && git clone https://github.com/Vladimir-csp/uwsm.git /tmp/uwsm \
-    && cd /tmp/uwsm \
-    && git checkout $(git describe --tags --abbrev=0) \
-    && meson setup --prefix=/home/builder/.local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
-    && ninja -C build \
-    && ninja -C build install \
-    && /home/builder/.local/bin/uwsm --version
-
-USER root
-WORKDIR /
-
-RUN export OMARCHY_ONLINE_INSTALL=true \
-    && mkdir -p /var/log \
-    && mkdir -p /root/.config \
-    && touch /etc/vconsole.conf \
-    && mkdir -p /.local/share/omarchy/ \
-    && git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null \
-    && source /.local/share/omarchy/install.sh 
-
-# RUN rm -f /var/log/*.log /var/log/*/*.log
 # RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
