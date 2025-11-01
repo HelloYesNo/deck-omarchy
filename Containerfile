@@ -23,15 +23,15 @@ FROM ghcr.io/ublue-os/bazzite-deck:latest
 ## Uncomment the following line if one desires to make /opt immutable and be able to be used
 ## by the package manager.
 
-USER build
-WORKDIR /home/build
+# USER build
+# WORKDIR /home/build
 
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     git clone --depth=1 https://github.com/JaKooLit/Fedora-Hyprland.git ~/Fedora-Hyprland \
     cd ~/Fedora-Hyprland \
-    chmod +x install.sh \
-    ./install.sh \
+    chmod +x auto-install.sh \
+    ./auto-install.sh \
     && ctx/cleanup
 
 RUN rm /opt && mkdir /opt
