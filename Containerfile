@@ -31,7 +31,7 @@ RUN --mount=type=cache,dst=/var/cache \
     git clone --depth=1 https://github.com/JaKooLit/Fedora-Hyprland.git ~/Fedora-Hyprland \
     cd ~/Fedora-Hyprland \
     chmod +x install.sh \
-    ./auto-install.sh \
+    ./install.sh \
     && ctx/cleanup
 
 RUN rm /opt && mkdir /opt
