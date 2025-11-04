@@ -27,7 +27,7 @@ FROM ghcr.io/ublue-os/bazzite-deck:latest
 # WORKDIR /home/build
 
 
-RUN rm /opt && mkdir /opt
+# RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
 ## make modifications desired in your image and install packages by modifying the build.sh script
