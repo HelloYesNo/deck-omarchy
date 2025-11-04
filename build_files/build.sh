@@ -11,8 +11,10 @@ set -ouex pipefail
 
 # this installs a package from fedora repos
 # dnf5 -y remove plasma-workspace plasma-* kde-*
-dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-# dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise meson ninja-build python3 python3-pip util-linux whiptail fuzzel libnotify scdoc
+
+
+# dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
+# dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise pacman power-profiles-daemon
 # pip install pyxdg dbus-python
 
 # mkdir -p /uwsm
@@ -28,35 +30,35 @@ dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.c
 
 # This is the Omarchy installation script content, run inside the container.
 
-# Set install mode to online since boot.sh is used for curl installations
-export OMARCHY_ONLINE_INSTALL=true
+# # Set install mode to online since boot.sh is used for curl installations
+# export OMARCHY_ONLINE_INSTALL=true
 
-# Omarchy ANSI art is skipped for silent install
+# # Omarchy ANSI art is skipped for silent install
 
-echo 'Running Omarchy installation script...'
-# Use custom repo if specified, otherwise default to basecamp/omarchy
-# OMARCHY_REPO='${OMARCHY_REPO:-HelloYesNo/omarchy}' # Defaulting to the repo from the script
+# echo 'Running Omarchy installation script...'
+# # Use custom repo if specified, otherwise default to basecamp/omarchy
+# # OMARCHY_REPO='${OMARCHY_REPO:-HelloYesNo/omarchy}' # Defaulting to the repo from the script
 
-echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
-# rm -rf /root/.local/share/omarchy/
-mkdir -p /.local/share/omarchy/
-git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null
+# echo -e '\nCloning Omarchy from: https://github.com/HelloYesNo/omarchy.git'
+# # rm -rf /root/.local/share/omarchy/
+# mkdir -p /.local/share/omarchy/
+# git clone "https://github.com/HelloYesNo/omarchy.git" /.local/share/omarchy/ >/dev/null
 
-Use custom branch if instructed, otherwise default to master
-OMARCHY_REF='master' # Defaulting to master
-if [[ \$OMARCHY_REF != 'master' ]]; then
-    echo -e '\e[32mUsing branch: master\e[0m'
-    cd /.local/share/omarchy/
-    git fetch origin 'master' && git checkout 'master'
-    cd -
-fi
+# # Use custom branch if instructed, otherwise default to master
+# OMARCHY_REF='master' # Defaulting to master
+# if [[ \$OMARCHY_REF != 'master' ]]; then
+#     echo -e '\e[32mUsing branch: master\e[0m'
+#     cd /.local/share/omarchy/
+#     git fetch origin 'master' && git checkout 'master'
+#     cd -
+# fi
 
-echo -e '\nInstallation starting...'
+# echo -e '\nInstallation starting...'
 
-The core install script. Since we already used --noconfirm on pacman,
-and the rest of the script is git/echo/source, it should run non-interactively.
-source /.local/share/omarchy/install.sh
-echo "Omarchy setup complete."
+# # The core install script. Since we already used --noconfirm on pacman,
+# # and the rest of the script is git/echo/source, it should run non-interactively.
+# source /.local/share/omarchy/install.sh
+# echo "Omarchy setup complete."
 
 
 

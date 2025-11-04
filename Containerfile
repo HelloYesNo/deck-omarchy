@@ -23,42 +23,11 @@ FROM quay.io/fedora/fedora-bootc:42
 ## Uncomment the following line if one desires to make /opt immutable and be able to be used
 ## by the package manager.
 
-# Step 1: Install packages
-# Using '\' for clean multi-line readability within one RUN instruction
-RUN --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    dnf5 -y install \
-        git \
-        meson \
-        ninja-build \
-        python3 \
-        python3-pip \
-        gcc \
-        libgcc \
-        dbus-devel \
-        glib2-devel \
-        python3-devel \
-        util-linux \
-        whiptail \
-        fuzzel \
-        libnotify \
-        scdoc \
-    && pip install pyxdg dbus-python
+# USER build
+# WORKDIR /home/build
 
-# Step 2: Build and install uwsm
-# Now that 'git' and other tools are installed, this step should work
-RUN mkdir -p /uwsm \
-    && git clone https://github.com/Vladimir-csp/uwsm.git /uwsm \
-    && cd /uwsm \
-    && git checkout $(git describe --tags --abbrev=0) \
-    && meson setup --prefix=/usr/local -Duuctl=enabled -Dfumon=enabled -Duwsm-app=enabled build \
-    && chown -R 0:0 /usr/local \
-    && mkdir -p /usr/local/share /usr/local/bin /usr/local/lib \
-    && ninja -C build \
-    && ninja -C build install \
-    && uwsm --version
 
-RUN rm /opt && mkdir /opt
+# RUN rm /opt && mkdir /opt
 
 ### MODIFICATIONS
 ## make modifications desired in your image and install packages by modifying the build.sh script
