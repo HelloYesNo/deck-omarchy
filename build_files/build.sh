@@ -14,7 +14,72 @@ set -ouex pipefail
 
 
 # dnf5 config-manager addrepo --overwrite --from-repofile=https://terra.fyralabs.com/terra.repo
-# dnf5 install -y --skip-unavailable --skip-broken --allowerasing git mise pacman power-profiles-daemon
+dnf5 install -y --skip-unavailable --skip-broken --allowerasing \
+    wget \
+    unzip \
+    gum \
+    rsync \
+    git \
+    figlet \
+    xdg-user-dirs \
+    hyprland \
+    hyprpaper \
+    hyprlock \
+    hypridle \
+    hyprpicker \
+    xdg-desktop-portal-gtk \
+    xdg-desktop-portal-hyprland \
+    libnotify \
+    kitty \
+    qt5-wayland \
+    qt6-wayland \
+    fastfetch \
+    eza \
+    python-pip \
+    python-gobject \
+    python-screeninfo \
+    tumbler \
+    brightnessctl \
+    nm-connection-editor \
+    network-manager-applet \
+    imagemagick \
+    jq \
+    xclip \
+    kitty \
+    neovim \
+    htop \
+    blueman \
+    grim \
+    slurp \
+    cliphist \
+    nwg-look \
+    qt6ct \
+    waybar \
+    rofi-wayland \
+    polkit-gnome \
+    zsh \
+    zsh-completions \
+    fzf \
+    pavucontrol \
+    papirus-icon-theme \
+    breeze \
+    flatpak \
+    swaync \
+    gvfs \
+    wlogout \
+    waypaper \
+    grimblast-git \
+    bibata-cursor-theme \
+    pacseek \
+    otf-font-awesome \
+    ttf-fira-sans \
+    ttf-fira-code \
+    ttf-firacode-nerd \
+    nwg-dock-hyprland \
+    power-profiles-daemon \
+    python-pywalfox \
+    vlc
+
 # pip install pyxdg dbus-python
 
 # mkdir -p /uwsm
